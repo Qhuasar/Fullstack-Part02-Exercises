@@ -48,10 +48,14 @@ const App = () => {
 
   const total = ({ parts }) =>
     parts.reduce((sum_carry, n) => sum_carry + n.exercises, 0);
-  console.log(total(courses[0]));
-  return <div>
-    {courses.map((course)=> <Course key = {course.id} course={course}/>)}
-  </div> ;
+
+  return (
+    <div>
+      {courses.map((course) => (
+        <Course key={course.id} course={course} total={total(course)} />
+      ))}
+    </div>
+  );
 };
 
 export default App;
