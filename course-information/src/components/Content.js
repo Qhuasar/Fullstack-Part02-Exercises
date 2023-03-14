@@ -1,6 +1,6 @@
 import Part from "./Part";
 
-const Total = ({ total }) => <p>total of 42 exercises: {total}</p>;
+const Total = ({ total }) => <p>total of {total} exercises</p>;
 
 const Content = ({ course, total }) => {
   return (
