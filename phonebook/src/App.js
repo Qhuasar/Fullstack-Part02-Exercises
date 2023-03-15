@@ -11,8 +11,20 @@ const App = () => {
     setNewName(event.target.value);
   };
 
+  const check_if_exists = () => {
+    for (let i = 0; i < persons.length; i++) {
+      if (persons[i].name === newName) {
+        window.alert(`${newName} was already added to the phonebook!`);
+        return "exists";
+      }
+    }
+    return "not";
+  };
   const add_name = (event) => {
     event.preventDefault();
+    if (check_if_exists() === "exists") {
+      return;
+    }
     setPersons(persons.concat({ name: newName, id: uniquid() }));
     setNewName("");
   };
