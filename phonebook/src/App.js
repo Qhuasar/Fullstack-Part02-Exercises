@@ -4,6 +4,7 @@ import Form from "./From";
 import List from "./List";
 import Input from "./Input";
 import { phoneServices } from "./services/phone";
+
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
@@ -12,20 +13,28 @@ const App = () => {
 
   const change_handler = (setState) => (event) => setState(event.target.value);
 
-  const check_if_exists = () => {
-    for (let i = 0; i < persons.length; i++) {
-      if (persons[i].name === newName) {
-        window.alert(`${newName} was already added to the phonebook!`);
-        return "exists";
-      }
-    }
-    return "not";
-  };
-
   const add_to_persons = (event) => {
     const new_entry = { name: newName, number: newNumber, id: uniquid() };
     event.preventDefault();
-    if (check_if_exists() === "exists") {
+    const person_exists = persons.find(
+      (person) => new_entry.name.toLowerCase() === person.name.toLowerCase()
+    );
+    if (person_exists !== undefined) {
+      if (
+        window.confirm(
+          `${person_exists.name} already exists, do you wish to update his number?`
+        )
+      ) {
+        const updated_entry = { ...person_exists, number: new_entry.number };
+        phoneServices.update_phone_entry(updated_entry).then((data) => {
+          console.log(data);
+          setPersons(
+            persons.map((person) => (person.id === data.id ? data : person))
+          );
+          setNewName("");
+          setNewNumber("");
+        });
+      }
       return;
     }
     phoneServices.create_phone_entry(new_entry).then((data) => {
@@ -45,11 +54,17 @@ const App = () => {
     phoneServices.get_all().then((contacts) => setPersons(contacts));
   }, []);
 
-  const delete_number = (id) => {
-    phoneServices.delete_number(id).then((data) => {
-      const pdated_persons = persons.filter(person => id !== person.id)
-      setPersons(pdated_persons);
-    });
+  const delete_number = (to_be_deleted) => {
+    if (
+      window.confirm(`Are you sure you want to delete  ${to_be_deleted.name}?`)
+    ) {
+      phoneServices.delete_number(to_be_deleted.id).then((data) => {
+        const updated_persons = persons.filter(
+          (person) => to_be_deleted.id !== person.id
+        );
+        setPersons(updated_persons);
+      });
+    }
   };
 
   return (

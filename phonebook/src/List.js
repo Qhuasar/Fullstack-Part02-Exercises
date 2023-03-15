@@ -8,7 +8,7 @@ const List = (props) => (
             {person.name} ----- {person.number}
           </p>
           <button
-            onClick={() => props.delete_number(person.id)}
+            onClick={() => props.delete_number(person)}
           >
             delete
           </button>
