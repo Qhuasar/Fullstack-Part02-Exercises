@@ -4,7 +4,7 @@ import Form from "./From";
 import List from "./List";
 import Input from "./Input";
 import axios from "axios";
-
+import phoneServices from "./services/phone";
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
@@ -24,15 +24,16 @@ const App = () => {
   };
 
   const add_to_persons = (event) => {
+    const new_entry = { name: newName, number: newNumber, id: uniquid() };
     event.preventDefault();
     if (check_if_exists() === "exists") {
       return;
     }
-    setPersons(
-      persons.concat({ name: newName, number: newNumber, id: uniquid() })
-    );
-    setNewName("");
-    setNewNumber("");
+    phoneServices.create_phone_entry(new_entry).then((data) => {
+      setPersons(persons.concat(data));
+      setNewName("");
+      setNewNumber("");
+    });
   };
 
   const displayed_persons = newFilter
@@ -42,9 +43,7 @@ const App = () => {
     : persons;
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/persons")
-      .then((response) => setPersons(response.data));
+    phoneServices.get_all().then((contacts) => setPersons(contacts));
   }, []);
 
   return (
