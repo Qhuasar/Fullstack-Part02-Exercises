@@ -1,9 +1,15 @@
 import { useState } from "react";
 import uniquid from "uniquid";
+import Form from "./From";
+import List from "./List";
+import Input from "./Input";
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: "Arto Hellas", number: 98734521, id: uniquid() },
+    { name: "Arto Hellas", number: "040-123456", id: 1 },
+    { name: "Ada Lovelace", number: "39-44-5323523", id: 2 },
+    { name: "Dan Abramov", number: "12-43-234345", id: 3 },
+    { name: "Mary Poppendieck", number: "39-23-6423122", id: 4 },
   ]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
@@ -32,7 +38,7 @@ const App = () => {
     setNewName("");
     setNewNumber("");
   };
-  
+
   const displayed_persons = newFilter
     ? persons.filter((person) =>
         person.name.toLowerCase().includes(newFilter.toLowerCase())
@@ -43,28 +49,21 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      filter:{" "}
-      <input value={newFilter} onChange={change_handler(setNewFilter)} />
-      <form onSubmit={add_to_persons}>
-        <h2>add a new</h2>
-        <div>
-          name: <input value={newName} onChange={change_handler(setNewName)} />
-        </div>
-        <div>
-          number:{" "}
-          <input value={newNumber} onChange={change_handler(setNewNumber)} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-      <h2>Numbers</h2>
-      {displayed_persons.map((person) => (
-        <p key={person.id}>
-          {person.name} ----- {person.number}
-        </p>
-      ))}
-      ...
+      <Input
+        text="filter by name"
+        change_handler={change_handler}
+        state_var={newFilter}
+        set_state={setNewFilter}
+      />
+      <Form
+        add_to_persons={add_to_persons}
+        change_handler={change_handler}
+        newNumber={newNumber}
+        setNewNumber={setNewNumber}
+        newName={newName}
+        setNewName={setNewName}
+      />
+      <List displayed_persons={displayed_persons} />
     </div>
   );
 };
