@@ -3,8 +3,7 @@ import uniquid from "uniquid";
 import Form from "./From";
 import List from "./List";
 import Input from "./Input";
-import axios from "axios";
-import phoneServices from "./services/phone";
+import { phoneServices } from "./services/phone";
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
@@ -46,6 +45,13 @@ const App = () => {
     phoneServices.get_all().then((contacts) => setPersons(contacts));
   }, []);
 
+  const delete_number = (id) => {
+    phoneServices.delete_number(id).then((data) => {
+      const pdated_persons = persons.filter(person => id !== person.id)
+      setPersons(pdated_persons);
+    });
+  };
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -63,7 +69,10 @@ const App = () => {
         newName={newName}
         setNewName={setNewName}
       />
-      <List displayed_persons={displayed_persons} />
+      <List
+        displayed_persons={displayed_persons}
+        delete_number={delete_number}
+      />
     </div>
   );
 };
