@@ -10,7 +10,10 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [newFilter, setNewFilter] = useState("");
-
+  const [newNotification, setNewNotification] = useState({
+    msg: null,
+    error: false,
+  });
   const change_handler = (setState) => (event) => setState(event.target.value);
 
   const add_to_persons = (event) => {
@@ -26,14 +29,37 @@ const App = () => {
         )
       ) {
         const updated_entry = { ...person_exists, number: new_entry.number };
-        phoneServices.update_phone_entry(updated_entry).then((data) => {
-          console.log(data);
-          setPersons(
-            persons.map((person) => (person.id === data.id ? data : person))
-          );
-          setNewName("");
-          setNewNumber("");
-        });
+        phoneServices
+          .update_phone_entry(updated_entry)
+          .then((data) => {
+            setPersons(
+              persons.map((person) => (person.id === data.id ? data : person))
+            );
+            setNewNotification({
+              ...newNotification,
+              msg: `${person_exists.number} was sucessfuly updated to ${data.number}`,
+            });
+            setTimeout(() => {
+              setNewNotification({ ...newNotification, msg: null });
+            }, 5000);
+            setNewName("");
+            setNewNumber("");
+          })
+          .catch((err) => {
+            setNewNotification({
+              msg: `${err} ${person_exists.name} no longer exists`,
+              error: true,
+            });
+            setTimeout(() => {
+              setNewNotification({
+                msg: null,
+                error: false,
+              });
+            }, 10000);
+            setPersons(
+              persons.filter((person) => person.id !== person_exists.id)
+            );
+          });
       }
       return;
     }
@@ -41,6 +67,13 @@ const App = () => {
       setPersons(persons.concat(data));
       setNewName("");
       setNewNumber("");
+      setNewNotification({
+        ...newNotification,
+        msg: `${new_entry.name} was sucessfuly created!`,
+      });
+      setTimeout(() => {
+        setNewNotification({ ...newNotification, msg: null });
+      }, 5000);
     });
   };
 
@@ -63,6 +96,14 @@ const App = () => {
           (person) => to_be_deleted.id !== person.id
         );
         setPersons(updated_persons);
+        setNewNotification({
+          ...newNotification,
+          msg: `${to_be_deleted.name} was  sucessfuly deleted`,
+        });
+        setTimeout(
+          () => setNewNotification({ ...newNotification, msg: null }),
+          5000
+        );
       });
     }
   };
@@ -83,6 +124,7 @@ const App = () => {
         setNewNumber={setNewNumber}
         newName={newName}
         setNewName={setNewName}
+        notification={newNotification}
       />
       <List
         displayed_persons={displayed_persons}

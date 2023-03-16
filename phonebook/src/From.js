@@ -1,4 +1,5 @@
 import Input from "./Input";
+import Notification from "./components/Notification";
 
 const Form = (props) => {
   return (
@@ -17,6 +18,7 @@ const Form = (props) => {
         set_state={props.setNewNumber}
       />
       <button type="submit">add</button>
+      <Notification message={props.notification} />
     </form>
   );
 };
