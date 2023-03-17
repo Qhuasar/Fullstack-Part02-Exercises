@@ -1,5 +1,4 @@
 import Country from "./Country";
-
 const Content = ({ current_list, set_current_list }) => {
   const toggle_show = (event) => {
     const capital = event.target.value;
